@@ -325,7 +325,7 @@ class _AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
                         ),
                         padding: const EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 8.0),
-                        primary: Theme.of(context).primaryColor,
+                        //  primary: Theme.of(context).primaryColor,
                         // primary: Theme.of(context).primaryTextTheme.button.color,
                       ),
                     ),
@@ -337,7 +337,7 @@ class _AuthCardState extends State<AuthCard> with TickerProviderStateMixin {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 30.0, vertical: 4),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      primary: Theme.of(context).primaryColor,
+                      //  primary: Theme.of(context).primaryColor,
                     ),
                   ),
                 ],

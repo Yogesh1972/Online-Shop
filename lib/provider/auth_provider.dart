@@ -89,28 +89,28 @@ class Auth with ChangeNotifier {
     return _authenticate(email, password, 'signInWithPassword');
   }
 
-  Future<bool> tryAutoLogin() async {
-    // GET DATA FROM SHARED PREFERENCES
-    final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
-      return false;
-    }
-    final extractedUserData =
-        json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
-    final expiryDate = DateTime.parse(extractedUserData['expiry']);
+  // Future<bool> tryAutoLogin() async {
+  //   // GET DATA FROM SHARED PREFERENCES
+  //   final prefs = await SharedPreferences.getInstance();
+  //   if (!prefs.containsKey('userData')) {
+  //     return false;
+  //   }
+  //   final extractedUserData =
+  //       json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+  //   final expiryDate = DateTime.parse(extractedUserData['expiry']);
 
-    // IF EXPIRED
-    if (expiryDate.isBefore(DateTime.now())) {
-      return refreshToken();
-    }
+  //   // IF EXPIRED
+  //   if (expiryDate.isBefore(DateTime.now())) {
+  //     return refreshToken();
+  //   }
 
-    // IF NOT EXPIRED
-    _token = extractedUserData['token'];
-    _userId = extractedUserData['userId'];
-    _expiryDate = expiryDate;
-    notifyListeners();
-    return true;
-  }
+  //   // IF NOT EXPIRED
+  //   _token = extractedUserData['token'];
+  //   _userId = extractedUserData['userId'];
+  //   _expiryDate = expiryDate;
+  //   notifyListeners();
+  //   return true;
+  // }
 
   Future<void> logout() async {
     _token = '';
@@ -126,9 +126,27 @@ class Auth with ChangeNotifier {
     prefs.clear();
   }
 
-  Future<void> keepLoggedIn() async {
-    final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
-    _authTimer = Timer(Duration(seconds: timeToExpiry), tryAutoLogin);
+  Future<bool> tryAutoLogin() async {
+    // GET DATA FROM SHARED PREFERENCES
+    final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey('userData')) {
+      return false;
+    }
+    final extractedUserData =
+        json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
+    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+
+    // IF EXPIRED
+    if (expiryDate.isBefore(DateTime.now())) {
+      return refreshToken();
+    }
+
+    // IF NOT EXPIRED
+    _token = extractedUserData['token'];
+    _userId = extractedUserData['userId'];
+    _expiryDate = expiryDate;
+    notifyListeners();
+    return true;
   }
 
   Future<bool> refreshToken() async {
@@ -138,7 +156,7 @@ class Auth with ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     final extractedUserData =
-        json.decode(prefs.getString('userData')!) as Map<String, Object>;
+        json.decode(prefs.getString('userData')!) as Map<String, dynamic>;
 
     try {
       final response = await http.post(
@@ -166,7 +184,6 @@ class Auth with ChangeNotifier {
       notifyListeners();
 
       // STORE DATA IN SHARED PREFERENCES
-      final prefs = await SharedPreferences.getInstance();
       final userData = json.encode(
         {
           'token': _token,
@@ -176,7 +193,8 @@ class Auth with ChangeNotifier {
       );
       prefs.setString('userData', userData);
 
-      keepLoggedIn();
+      final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
+      _authTimer = Timer(Duration(seconds: timeToExpiry), tryAutoLogin);
       return true;
     } catch (error) {
       return false;

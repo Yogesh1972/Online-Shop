@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../provider/product.dart';
 import '../widgets/product_Item.dart';
 import '../widgets/productsGrid.dart';
-import '../widgets/badge.dart';
 import './cart_screen.dart';
 import '../widgets/drawer.dart';
 
@@ -92,7 +91,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
                 Navigator.of(context).pushNamed(Cart_Screen.routeName);
               },
             ),
-          )
+          ),
         ],
       ),
       body: _isLoading
@@ -102,6 +101,45 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           : ProductGrid(
               showOnlyFavdata,
             ),
+    );
+  }
+}
+
+class Badge extends StatelessWidget {
+  final Widget child;
+  final String value;
+
+  Badge({required this.child, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        Positioned(
+          top: 8,
+          right: 8,
+          child: Container(
+            padding: EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.red,
+            ),
+            constraints: BoxConstraints(
+              minWidth: 16,
+              minHeight: 16,
+            ),
+            child: Text(
+              value,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

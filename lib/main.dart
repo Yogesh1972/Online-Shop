@@ -60,7 +60,7 @@ class online_shop extends StatelessWidget {
               title: 'MyShop',
               theme: ThemeData(
                 primarySwatch: Colors.cyan,
-                accentColor: Colors.blueGrey,
+                //  accentColor: Colors.blueGrey,
                 fontFamily: 'Lato',
                 pageTransitionsTheme: PageTransitionsTheme(
                   builders: {
